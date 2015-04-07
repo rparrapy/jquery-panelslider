@@ -46,11 +46,15 @@
         break;
     }
 
+    if(typeof options.onOpen == 'function' && !options.animateCallbacks) {
+        options.onOpen();
+      }
+
     $body.animate(bodyAnimation, options.duration);
     panel.show().animate(panelAnimation, options.duration, function() {
       _sliding = false;
 
-      if(typeof options.onOpen == 'function') {
+      if(typeof options.onOpen == 'function' && options.animateCallbacks) {
         options.onOpen();
       }
     });
@@ -71,20 +75,22 @@
 
     // If another panel is opened, close it before opening the new one
     if(active.is(':visible') && active[0] != element[0]) {
-      $.panelslider.close(function() {
+      _slideIn(element, options);
+/*      $.panelslider.close(function() {
         _slideIn(element, options);
-      });
+      });*/
     } else if(!active.length || active.is(':hidden')) {
       _slideIn(element, options);
     }
   };
 
-  $.panelslider.close = function(callback) {
-    var active = $('.ps-active-panel'),
+  $.panelslider.close = function(panel, options) {
+    var active = panel || $('.ps-active-panel'),
         duration = active.data('duration'),
         panelWidth = active.outerWidth(true),
         bodyAnimation = {},
-        panelAnimation = {};
+        panelAnimation = {},
+        callback = options.onClose;
 
     if(!active.length || active.is(':hidden') || _sliding) {
       return;
@@ -104,13 +110,17 @@
         break;
     }
 
+    if(callback && !options.animateCallbacks) {
+        callback();
+      }
+
     active.animate(panelAnimation, duration);
     $body.animate(bodyAnimation, duration, function() {
       active.hide();
       active.removeClass('ps-active-panel');
       _sliding = false;
 
-      if(callback) {
+      if(callback && options.animateCallbacks) {
         callback();
       }
     });
@@ -140,8 +150,8 @@
           panel = $(this.getAttribute('href'));
 
       // Close panel if it is already opened otherwise open it
-      if (active.is(':visible') && panel[0] == active[0]) {
-        $.panelslider.close();
+      if (active.is(':visible') && active.index(panel[0]) >= 0) {
+        $.panelslider.close(panel, options);
       } else {
         $.panelslider(panel, options);
       }
