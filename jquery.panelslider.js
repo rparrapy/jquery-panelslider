@@ -5,7 +5,7 @@
 (function($) {
   'use strict';
 
-  var $body = $('body'),
+  var $body,
       _sliding = false;
 
   function _slideIn(panel, options) {
@@ -62,10 +62,12 @@
       side: 'left',     // panel side: left or right
       duration: 200,    // Transition duration in miliseconds
       clickClose: true, // If true closes panel when clicking outside it
-      onOpen: null      // When supplied, function is called after the panel opens
+      onOpen: null,      // When supplied, function is called after the panel opens
+      container: $('body')
     };
 
     options = $.extend({}, defaults, options);
+    $body = options.container;
 
     // If another panel is opened, close it before opening the new one
     if(active.is(':visible') && active[0] != element[0]) {
