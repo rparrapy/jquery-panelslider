@@ -22,7 +22,7 @@
       position: 'fixed',
       top: 0,
       height: '100%',
-      'z-index': 999999
+      'z-index': 1000
     });
     panel.data(options);
 
