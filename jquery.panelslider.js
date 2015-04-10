@@ -46,15 +46,15 @@
         break;
     }
 
-    if(typeof options.onOpen == 'function' && !options.animateCallbacks) {
-        options.onOpen();
+    if(typeof options.onStartOpen == 'function') {
+        options.onStartOpen();
       }
 
     $body.animate(bodyAnimation, options.duration);
     panel.show().animate(panelAnimation, options.duration, function() {
       _sliding = false;
 
-      if(typeof options.onOpen == 'function' && options.animateCallbacks) {
+      if(typeof options.onOpen == 'function') {
         options.onOpen();
       }
     });
@@ -67,6 +67,9 @@
       duration: 200,    // Transition duration in miliseconds
       clickClose: true, // If true closes panel when clicking outside it
       onOpen: null,      // When supplied, function is called after the panel opens
+      onStartOpen: null,      // When supplied, function is called after the panel opens
+      onStartClose: null,      // When supplied, function is called after the panel opens
+      onClose: null,      // When supplied, function is called after the panel opens
       container: $('body')
     };
 
@@ -90,7 +93,9 @@
         panelWidth = active.outerWidth(true),
         bodyAnimation = {},
         panelAnimation = {},
-        callback = options.onClose;
+        onClose = options.onClose,
+        onStartClose = options.onStartClose;
+
 
     if(!active.length || active.is(':hidden') || _sliding) {
       return;
@@ -110,8 +115,8 @@
         break;
     }
 
-    if(callback && !options.animateCallbacks) {
-        callback();
+    if(onStartClose) {
+        onStartClose();
       }
 
     active.animate(panelAnimation, duration);
@@ -120,8 +125,8 @@
       active.removeClass('ps-active-panel');
       _sliding = false;
 
-      if(callback && options.animateCallbacks) {
-        callback();
+      if(onClose) {
+        onClose();
       }
     });
   };
